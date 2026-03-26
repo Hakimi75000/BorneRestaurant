@@ -1,0 +1,172 @@
+﻿<Window x:Class="BorneRestaurant.views.MenuWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BorneRestaurant.views"
+        mc:Ignorable="d"
+        Title="MenuWindow" Height="450" Width="800">
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/images/imgfondborne.jpg"
+                        Stretch="UniformToFill"
+                        Opacity="0.4"/>
+        </Grid.Background>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- BANDEAU DU HAUT -->
+        <Border Background="#800000"
+                Grid.Row="0"
+                CornerRadius="16"
+                BorderBrush="#800000"
+                BorderThickness="1"
+                Padding="20"
+                Opacity="0.93">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Menu à gauche -->
+                <TextBlock Text="Menu"
+                           Foreground="White"
+                           FontSize="22"
+                           VerticalAlignment="Center"
+                           Grid.Column="0"/>
+
+                <!-- Bouton Ajouter au milieu -->
+                <Button Content="Ajouter un produit"
+                        Width="220"
+                        Height="40"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Background="CadetBlue"
+                        FontSize="16"
+                        Foreground="DarkBlue"
+                        Click="BtnAjoutProduit_Click"
+                        Grid.Column="1" Margin="75,0,0,0"/>
+
+                <Button Content="Ajouter une catégorie"
+                    Width="220"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Background="CadetBlue"
+                    FontSize="16"
+                    Foreground="DarkBlue"
+                    Click="BtnAjoutCategorie_Click"
+                    Grid.Column="1" Margin="335,0,0,0"/>
+
+                <!-- Mode à droite -->
+                <Border Background="DarkRed"
+                        CornerRadius="16"
+                        BorderBrush="#800000"
+                        Padding="10,4"
+                        VerticalAlignment="Center"
+                        Grid.Column="2">
+
+                    <TextBlock x:Name="TxtMode"
+                               Foreground="White"
+                               FontSize="14"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- CONTENU -->
+        <Grid Grid.Row="1" Margin="20">
+
+            <!-- Zone catégories + produits
+                 Margin en bas pour laisser de la place au bouton Retour -->
+            <Grid Margin="0,0,0,70">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Catégories -->
+                <ListBox x:Name="ListCategories"
+                         Grid.Column="0"
+                         DisplayMemberPath="nom"
+                         SelectionChanged="ListCategories_SelectionChanged"/>
+
+                <!-- Produits -->
+                <DataGrid x:Name="GridProduits"
+                          Grid.Column="1"
+                          Margin="20,0,0,0"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding nom}" Width="*"/>
+                        <DataGridTextColumn Header="Prix" Binding="{Binding prix}" Width="120"/>
+                        <DataGridTextColumn Header="Description" Binding="{Binding description}" Width="2*"/>
+                        <DataGridTextColumn Header="Quantitée" Binding="{Binding quantite}" Width="70"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <!-- Bouton Retour AU-DESSUS (premier plan) -->
+            <Border CornerRadius="16"
+                    Background="DarkRed"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,0"
+                    Panel.ZIndex="10">
+
+                <Button Content="Retour"
+                        Width="100"
+                        Height="40"
+                        FontSize="20"
+                        Background="Transparent"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Click="BtnRetour_Click"/>
+
+
+            </Border>
+
+            <Button Content="Supprimer produit"
+        Width="135"
+        Height="40"
+        Click="BtnSupprimerProduit_Click"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Bottom"
+        Margin="485,0,0,15"/>
+
+            <Button Content="Supprimer catégorie"
+        Width="135"
+        Height="40"
+        Click="BtnSupprimerCategorie_Click"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom"
+        Margin="0,0,0,15"/>
+
+            <Button Content="Modifier catégorie"
+        Width="135"
+        Height="40"
+        Click="BtnModifierCategorie_Click"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom"
+        Margin="0,0,280,15"/>
+
+            <Button Content="Modifier produit"
+        Width="135"
+        Height="40"
+        Click="BtnModifierProduit_Click"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom"
+        Margin="0,0,420,15"/>
+
+
+
+        </Grid>
+
+    </Grid>
+</Window>
