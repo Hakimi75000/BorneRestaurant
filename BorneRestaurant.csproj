@@ -99,76 +99,97 @@
       <HintPath>packages\ZstdSharp.Port.0.8.7\lib\net462\ZstdSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="data\Db.cs" />
-    <Compile Include="models\Categorie.cs" />
-    <Compile Include="models\ChoixMode.cs" />
-    <Compile Include="models\Produit.cs" />
-    <Compile Include="views\AjoutCategorie.xaml.cs">
-      <DependentUpon>AjoutCategorie.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="views\AjoutProduit.xaml.cs">
-      <DependentUpon>AjoutProduit.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="views\authWindow.xaml.cs">
-      <DependentUpon>authWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="views\ChoixWindow.xaml.cs">
-      <DependentUpon>ChoixWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="views\MenuWindow.xaml.cs">
-      <DependentUpon>MenuWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="views\ModifierCategorie.xaml.cs">
-      <DependentUpon>ModifierCategorie.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="views\ModifierProduit.xaml.cs">
-      <DependentUpon>ModifierProduit.xaml</DependentUpon>
-    </Compile>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="views\AjoutCategorie.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="views\AjoutProduit.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="views\authWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="views\ChoixWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="views\MenuWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="views\ModifierCategorie.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="views\ModifierProduit.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
+	<ItemGroup>
+		<ApplicationDefinition Include="App.xaml">
+			<Generator>MSBuild:Compile</Generator>
+			<SubType>Designer</SubType>
+		</ApplicationDefinition>
+
+		<Compile Include="data\Db.cs" />
+
+		<Compile Include="models\Categorie.cs" />
+		<Compile Include="models\ChoixMode.cs" />
+		<Compile Include="models\Produit.cs" />
+
+		<Compile Include="Commands\RelayCommand.cs" />
+
+		<Compile Include="Services\ProduitService.cs" />
+		<Compile Include="Services\CategorieService.cs" />
+
+		<Compile Include="ViewModels\BaseViewModel.cs" />
+		<Compile Include="ViewModels\AjoutProduitViewModel.cs" />
+		<Compile Include="ViewModels\AjoutCategorieViewModel.cs" />
+
+		<Compile Include="views\AjoutCategorie.xaml.cs">
+			<DependentUpon>AjoutCategorie.xaml</DependentUpon>
+		</Compile>
+
+		<Compile Include="views\AjoutProduit.xaml.cs">
+			<DependentUpon>AjoutProduit.xaml</DependentUpon>
+		</Compile>
+
+
+		<Compile Include="views\ChoixWindow.xaml.cs">
+			<DependentUpon>ChoixWindow.xaml</DependentUpon>
+		</Compile>
+
+		<Compile Include="views\MenuWindow.xaml.cs">
+			<DependentUpon>MenuWindow.xaml</DependentUpon>
+		</Compile>
+
+		<Compile Include="views\ModifierCategorie.xaml.cs">
+			<DependentUpon>ModifierCategorie.xaml</DependentUpon>
+		</Compile>
+
+		<Compile Include="views\ModifierProduit.xaml.cs">
+			<DependentUpon>ModifierProduit.xaml</DependentUpon>
+		</Compile>
+
+		<Page Include="MainWindow.xaml">
+			<Generator>MSBuild:Compile</Generator>
+			<SubType>Designer</SubType>
+		</Page>
+
+		<Compile Include="App.xaml.cs">
+			<DependentUpon>App.xaml</DependentUpon>
+			<SubType>Code</SubType>
+		</Compile>
+
+		<Compile Include="MainWindow.xaml.cs">
+			<DependentUpon>MainWindow.xaml</DependentUpon>
+			<SubType>Code</SubType>
+		</Compile>
+
+		<Page Include="views\AjoutCategorie.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+
+		<Page Include="views\AjoutProduit.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+
+
+		<Page Include="views\ChoixWindow.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+
+		<Page Include="views\MenuWindow.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+
+		<Page Include="views\ModifierCategorie.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+
+		<Page Include="views\ModifierProduit.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

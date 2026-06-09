@@ -1,58 +1,28 @@
-﻿using BorneRestaurant.models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Permet d'utiliser les composants WPF (Window, boutons, etc.)
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using MySql.Data.MySqlClient;
-using BorneRestaurant.data;
 
+// Permet d'utiliser le ViewModel de la fenêtre
+using BorneRestaurant.ViewModels;
 
 namespace BorneRestaurant.views
 {
+    // Fenêtre permettant d'ajouter une nouvelle catégorie
     public partial class AjoutCategorie : Window
     {
+        // Constructeur de la fenêtre
         public AjoutCategorie()
         {
+            // Initialise tous les composants définis dans le fichier XAML
             InitializeComponent();
-        }
 
-        private void BtnAjouter_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(TxtNom.Text))
-            {
-                MessageBox.Show("Le nom est obligatoire.");
-                return;
-            }
 
-            using (var conn = Db.GetConnection())
-            {
-                conn.Open();
-
-                string sql = "INSERT INTO categories (nom, description) VALUES (@nom, @desc);";
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@nom", TxtNom.Text.Trim());
-                    cmd.Parameters.AddWithValue("@desc", TxtDescription.Text.Trim());
-                    cmd.ExecuteNonQuery();
-                }
-            }
-
-            MessageBox.Show("Catégorie ajoutée !");
-            TxtNom.Clear();
-            TxtDescription.Clear();
-            TxtNom.Focus();
+        // Association de la vue avec son ViewModel
+        // Le ViewModel contient les données et les commandes
+        // utilisées par l'interface graphique.
+        DataContext =
+            new AjoutCategorieViewModel();
         }
     }
-}
 
+
+}

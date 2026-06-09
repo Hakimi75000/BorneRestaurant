@@ -3,51 +3,79 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BorneRestaurant.views"
         mc:Ignorable="d"
-        Title="AjoutProduit" Height="450" Width="800">
+        Title="Ajout d'un produit"
+        Height="450"
+        Width="800">
 
-    <Grid Margin="20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="3*"/>
-            </Grid.ColumnDefinitions>
+	<Grid Margin="20">
 
-            <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                <TextBlock Text="Nouveau produit" FontSize="20" FontWeight="Bold"/>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="2*" />
+			<ColumnDefinition Width="3*" />
+		</Grid.ColumnDefinitions>
 
-                <TextBlock Text="Nom"/>
-                <TextBox x:Name="TxtNom"/>
+		<!-- Formulaire -->
+		<StackPanel Grid.Column="0"
+                    Margin="0,0,20,0">
 
-                <TextBlock Text="Prix"/>
-                <TextBox x:Name="TxtPrix"/>
+			<TextBlock Text="Nouveau produit"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="0,0,0,15"/>
 
-                <TextBlock Text="Description"/>
-                <TextBox x:Name="TxtDescription" Height="80" TextWrapping="Wrap" AcceptsReturn="True"/>
+			<TextBlock Text="Nom"/>
+			<TextBox Margin="0,5,0,10"
+                     Text="{Binding Nom,
+                                    UpdateSourceTrigger=PropertyChanged}"/>
 
+			<TextBlock Text="Prix"/>
+			<TextBox Margin="0,5,0,10"
+                     Text="{Binding Prix,
+                                    UpdateSourceTrigger=PropertyChanged}"/>
 
-       
+			<TextBlock Text="Description"/>
+			<TextBox Height="80"
+                     Margin="0,5,0,10"
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"
+                     Text="{Binding Description,
+                                    UpdateSourceTrigger=PropertyChanged}"/>
 
-
-            <Button Content="Ajouter"
+			<Button Content="Ajouter"
                     Height="40"
                     Margin="0,10,0,0"
-                    Click="BtnAjouter_Click"/>
-            </StackPanel>
+                    Command="{Binding AjouterProduitCommand}"/>
 
-            <!-- Liste affichage -->
-            <DataGrid Grid.Column="1"
+		</StackPanel>
+
+		<!-- Liste des produits -->
+		<DataGrid Grid.Column="1"
                   x:Name="GridProduits"
                   AutoGenerateColumns="False"
                   IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Nom" Binding="{Binding nom}" Width="*"/>
-                    <DataGridTextColumn Header="Prix" Binding="{Binding prix}" Width="100"/>
-                    <DataGridTextColumn Header="Description" Binding="{Binding description}" Width="2*"/>
-                    <DataGridTextColumn Header="Quantité" Binding="{Binding quantite}" Width="70"/>
 
-            </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
-    </Window>
+			<DataGrid.Columns>
 
+				<DataGridTextColumn Header="Nom"
+                                    Binding="{Binding nom}"
+                                    Width="*" />
+
+				<DataGridTextColumn Header="Prix"
+                                    Binding="{Binding prix}"
+                                    Width="100" />
+
+				<DataGridTextColumn Header="Description"
+                                    Binding="{Binding description}"
+                                    Width="2*" />
+
+				<DataGridTextColumn Header="Quantité"
+                                    Binding="{Binding quantite}"
+                                    Width="70" />
+
+			</DataGrid.Columns>
+
+		</DataGrid>
+
+	</Grid>
+</Window>

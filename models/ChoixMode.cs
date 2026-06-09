@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Cette classe contient les différents modes de commande
+// disponibles dans l'application.
 
 namespace BorneRestaurant.models
 {
     public class Choixmode
     {
+        // Enumération représentant les deux modes de commande.
+        // Une enum permet de limiter les valeurs possibles.
         public enum Ordermode
         {
+            // Commande consommée dans le restaurant
             Surplace,
-            AEmporter
+
+
+        // Commande à récupérer et emporter
+        AEmporter
         }
     }
-}
 
+
+}

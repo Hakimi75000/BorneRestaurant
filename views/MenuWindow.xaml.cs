@@ -1,257 +1,279 @@
-﻿using BorneRestaurant.data;
+﻿// Importation des classes du projet
 using BorneRestaurant.models;
-using BorneRestaurant.views;
-using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
+using BorneRestaurant.Services;
+
+// ObservableCollection permet de mettre à jour automatiquement l'interface
+// lorsqu'on ajoute ou supprime des éléments dans une liste.
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BorneRestaurant.views
 {
+    // Fenêtre principale du menu du restaurant
     public partial class MenuWindow : Window
     {
-        private ObservableCollection<Categorie> categories = new ObservableCollection<Categorie>();
+        // Liste des catégories affichées dans l'interface
+        private ObservableCollection<Categorie> categories =
+        new ObservableCollection<Categorie>();
 
+
+    // Services permettant d'accéder aux données de la base MySQL
+    private readonly CategorieService categorieService;
+        private readonly ProduitService produitService;
+
+        // Constructeur de la fenêtre
         public MenuWindow(string mode)
         {
             InitializeComponent();
+
+            // Création des services
+            categorieService = new CategorieService();
+            produitService = new ProduitService();
+
+            // Affichage du mode choisi (Sur place / À emporter)
             TxtMode.Text = mode;
 
-            ChargerCategoriesDepuisDb();
+            // Chargement des catégories depuis la base de données
+            ChargerCategories();
+
+            // Liaison de la liste des catégories avec le contrôle ListBox
             ListCategories.ItemsSource = categories;
 
+            // Sélection automatique de la première catégorie
             if (categories.Count > 0)
                 ListCategories.SelectedIndex = 0;
         }
 
-        private void ChargerCategoriesDepuisDb()
+        // Charge toutes les catégories depuis la base
+        private void ChargerCategories()
         {
+            // On vide la liste actuelle
             categories.Clear();
 
-            using (var conn = Db.GetConnection())
+            // On ajoute les catégories récupérées par le service
+            foreach (var cat in categorieService.GetCategories())
             {
-                conn.Open();
-
-                string sql = "SELECT id, nom, description FROM categories ORDER BY nom;";
-                using (var cmd = new MySqlCommand(sql, conn))
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        categories.Add(new Categorie
-                        {
-                            id = reader.GetInt32("id"),
-                            nom = reader.GetString("nom"),
-                            description = reader.IsDBNull(reader.GetOrdinal("description")) ? "" : reader.GetString("description")
-                        });
-                    }
-                }
+                categories.Add(cat);
             }
         }
 
-        private void ChargerProduitsDepuisDb(int categorieId)
+        // Charge les produits de la catégorie sélectionnée
+        private void ChargerProduits(int categorieId)
         {
-            var produits = new ObservableCollection<Produit>();
-
-            using (var conn = Db.GetConnection())
-            {
-                conn.Open();
-
-                string sql = @"SELECT id, nom, description, prix, categorie_id
-                               FROM produits
-                               WHERE categorie_id = @id
-                               ORDER BY nom;";
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@id", categorieId);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            produits.Add(new Produit
-                            {
-                                id = reader.GetInt32("id"),
-                                nom = reader.GetString("nom"),
-                                description = reader.IsDBNull(reader.GetOrdinal("description")) ? "" : reader.GetString("description"),
-                                prix = reader.GetDecimal("prix"),
-                                categorie_id = reader.GetInt32("categorie_id")
-                            });
-                        }
-                    }
-                }
-            }
-
-            GridProduits.ItemsSource = produits;
+            GridProduits.ItemsSource =
+                produitService.GetProduits(categorieId);
         }
 
-        private void ListCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        // Événement déclenché lorsqu'on sélectionne une catégorie
+        private void ListCategories_SelectionChanged(
+            object sender,
+            SelectionChangedEventArgs e)
         {
             var cat = ListCategories.SelectedItem as Categorie;
-            if (cat == null) return;
 
-            ChargerProduitsDepuisDb(cat.id);
+            // Sécurité : si aucune catégorie n'est sélectionnée
+            if (cat == null)
+                return;
+
+            // Chargement des produits associés à la catégorie
+            ChargerProduits(cat.id);
         }
 
-        private void BtnAjoutProduit_Click(object sender, RoutedEventArgs e)
+        // Bouton Ajouter un produit
+        private void BtnAjoutProduit_Click(
+            object sender,
+            RoutedEventArgs e)
         {
             var cat = ListCategories.SelectedItem as Categorie;
+
+            // Vérifie qu'une catégorie est sélectionnée
             if (cat == null)
             {
-                MessageBox.Show("Choisis d'abord une catégorie.");
+                MessageBox.Show(
+                    "Choisis d'abord une catégorie.");
                 return;
             }
 
-            // ✅ on passe l'id de catégorie à la fenêtre d'ajout produit
-            AjoutProduit ajoutProduit = new AjoutProduit(cat.id);
+            // Ouverture de la fenêtre d'ajout
+            var ajoutProduit =
+                new AjoutProduit(cat.id);
+
             ajoutProduit.ShowDialog();
 
-            // ✅ refresh produits après ajout
-            ChargerProduitsDepuisDb(cat.id);
+            // Rafraîchissement de la liste après ajout
+            ChargerProduits(cat.id);
         }
 
-        // ✅ Ajout Catégorie (si tu as un bouton qui appelle cette fonction)
-        private void BtnAjoutCategorie_Click(object sender, RoutedEventArgs e)
+        // Bouton Ajouter une catégorie
+        private void BtnAjoutCategorie_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            AjoutCategorie ajoutCategorie = new AjoutCategorie();
+            var ajoutCategorie =
+                new AjoutCategorie();
+
             ajoutCategorie.ShowDialog();
 
-            // ✅ refresh catégories après ajout
-            ChargerCategoriesDepuisDb();
+            // Rechargement des catégories
+            ChargerCategories();
+
+            // Sélection automatique de la première catégorie
             if (categories.Count > 0)
                 ListCategories.SelectedIndex = 0;
         }
 
-        private void BtnRetour_Click(object sender, RoutedEventArgs e)
+        // Retour vers la fenêtre précédente
+        private void BtnRetour_Click(
+            object sender,
+            RoutedEventArgs e)
         {
             ChoixWindow choix = new ChoixWindow();
+
             choix.Show();
-            this.Close();
+
+            Close();
         }
 
-        private void BtnSupprimerProduit_Click(object sender, RoutedEventArgs e)
+        // Bouton Supprimer un produit
+        private void BtnSupprimerProduit_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            var produit = GridProduits.SelectedItem as Produit;
+            var produit =
+                GridProduits.SelectedItem as Produit;
+
+            // Vérifie qu'un produit est sélectionné
             if (produit == null)
             {
-                MessageBox.Show("Sélectionne un produit à supprimer.");
+                MessageBox.Show(
+                    "Sélectionne un produit à supprimer.");
                 return;
             }
 
+            // Demande de confirmation
             var confirm = MessageBox.Show(
                 $"Supprimer '{produit.nom}' ?",
                 "Confirmation",
                 MessageBoxButton.YesNo);
 
-            if (confirm != MessageBoxResult.Yes) return;
+            if (confirm != MessageBoxResult.Yes)
+                return;
 
-            using (var conn = Db.GetConnection())
-            {
-                conn.Open();
-                string sql = "DELETE FROM produits WHERE id = @id;";
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@id", produit.id);
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            // Suppression du produit via le service
+            produitService.SupprimerProduit(produit.id);
 
-            // Recharge la liste
-            var cat = ListCategories.SelectedItem as Categorie;
-            if (cat != null) ChargerProduitsDepuisDb(cat.id);
+            // Rechargement de la liste
+            var cat =
+                ListCategories.SelectedItem as Categorie;
+
+            if (cat != null)
+                ChargerProduits(cat.id);
         }
 
-        private void BtnSupprimerCategorie_Click(object sender, RoutedEventArgs e)
+        // Bouton Supprimer une catégorie
+        private void BtnSupprimerCategorie_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            var cat = ListCategories.SelectedItem as Categorie;
+            var cat =
+                ListCategories.SelectedItem as Categorie;
+
+            // Vérifie qu'une catégorie est sélectionnée
             if (cat == null)
             {
-                MessageBox.Show("Sélectionne une catégorie à supprimer.");
+                MessageBox.Show(
+                    "Sélectionne une catégorie.");
                 return;
             }
 
+            // Demande de confirmation
             var confirm = MessageBox.Show(
                 $"Supprimer la catégorie '{cat.nom}' ?",
                 "Confirmation",
                 MessageBoxButton.YesNo);
 
-            if (confirm != MessageBoxResult.Yes) return;
+            if (confirm != MessageBoxResult.Yes)
+                return;
 
             try
             {
-                using (var conn = Db.GetConnection())
-                {
-                    conn.Open();
-                    string sql = "DELETE FROM categories WHERE id = @id;";
-                    using (var cmd = new MySqlCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@id", cat.id);
-                        cmd.ExecuteNonQuery();
-                    }
-                }
+                // Suppression via le service
+                categorieService.SupprimerCategorie(cat.id);
             }
-            catch (MySql.Data.MySqlClient.MySqlException)
+            catch
             {
-                // Cas RESTRICT / clé étrangère
-                MessageBox.Show("Impossible de supprimer : cette catégorie contient des produits.\nSupprime d'abord ses produits.");
+                // Gestion du cas où la catégorie contient encore des produits
+                MessageBox.Show(
+                    "Impossible de supprimer cette catégorie car elle contient des produits.");
                 return;
             }
 
-            ChargerCategoriesDepuisDb();
+            // Rafraîchissement de l'affichage
+            ChargerCategories();
+
             GridProduits.ItemsSource = null;
         }
 
-        private void BtnModifierCategorie_Click(object sender, RoutedEventArgs e)
+        // Bouton Modifier une catégorie
+        private void BtnModifierCategorie_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            var cat = ListCategories.SelectedItem as Categorie;
+            var cat =
+                ListCategories.SelectedItem as Categorie;
+
             if (cat == null)
             {
-                MessageBox.Show("Sélectionne une catégorie.");
+                MessageBox.Show(
+                    "Sélectionne une catégorie.");
                 return;
             }
 
+            // Ouverture de la fenêtre de modification
             var w = new ModifierCategorie(cat);
+
             bool? ok = w.ShowDialog();
 
+            // Si modification validée
             if (ok == true)
             {
-                ChargerCategoriesDepuisDb();
+                ChargerCategories();
             }
         }
 
-        private void BtnModifierProduit_Click(object sender, RoutedEventArgs e)
+        // Bouton Modifier un produit
+        private void BtnModifierProduit_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            var p = GridProduits.SelectedItem as Produit;
-            if (p == null)
+            var produit =
+                GridProduits.SelectedItem as Produit;
+
+            if (produit == null)
             {
-                MessageBox.Show("Sélectionne un produit.");
+                MessageBox.Show(
+                    "Sélectionne un produit.");
                 return;
             }
 
-            var w = new ModifierProduit(p);
+            // Ouverture de la fenêtre de modification
+            var w = new ModifierProduit(produit);
+
             bool? ok = w.ShowDialog();
 
+            // Si modification validée
             if (ok == true)
             {
-                var cat = ListCategories.SelectedItem as Categorie;
-                if (cat != null) ChargerProduitsDepuisDb(cat.id);
+                var cat =
+                    ListCategories.SelectedItem as Categorie;
+
+                if (cat != null)
+                    ChargerProduits(cat.id);
             }
         }
-
-
-
-
     }
-}
 
+
+}
